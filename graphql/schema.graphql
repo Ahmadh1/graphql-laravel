@@ -1,0 +1,69 @@
+
+
+type Query {
+	# Books
+    books: [Book] @all
+    book(id: ID @eq): Book @find
+    # Categories
+    categories: [Category] @all
+    category(id: ID @eq): Category @find
+    # featured
+    featuredByBooks(feature: Boolean! @eq): [Book] @all
+}
+type Mutation {
+	# categories
+	# 1 - create
+	createCateogry(
+		title: String! @rules(apply:["required", "unique:categories,title"])
+	): Category @create
+	# 2 - Update
+	updateCategory(
+		id: ID! @rules(apply:["required"])
+		title: String! @rules(apply:["required", "unique:categories,title"])
+	): Category @update
+	# 3 - Delete
+	deleteCategory(
+		id: ID! @rules(apply:["required"])
+	): Category @delete
+	# Books
+	# 1 - create
+	createBook(
+		title: String! @rules(apply:["required"])
+		author: String! @rules(apply:["required"])
+		details: String!
+		image: String 
+		link: String
+		feature: Boolean
+		category_id: Int!
+	): Book @create
+	# 2 - Update
+	updateBook(
+		id: ID! @rules(apply:["required"])
+		title: String 
+		author: String 
+		details: String
+		image: String 
+		link: String
+		feature: Boolean
+		category_id: Int
+	): Book @update
+	# 3 - Delete
+	deleteBook(
+		id: ID! @rules(apply:["required"])
+	): Book @delete
+}
+type Book {
+	id: ID!
+	title: String!
+	author: String!
+	image: String
+	link: String
+	details: String
+	feature: Boolean
+	category: Category! @belongsTo
+}
+type Category {
+	id: ID!
+	title: String!
+	books: [Book]! @hasMany
+}
